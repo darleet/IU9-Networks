@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Feed</title>
+    <link rel="stylesheet" href="/assets/feed.css">
+</head>
+<body>
+<header>
+    <a class="logo" href="/">
+        <h1>News App</h1>
+    </a>
+</header>
+<main>
+    <section class="container">
+        <ul class="rss-feed">
+            {{ range . }}
+            <li class="article">
+                <div>
+                    <a target="_blank" rel="noreferrer noopener" href="{{ .URL }}">
+                        <h3 class="title">{{ .Title }}</h3>
+                    </a>
+                    <p class="description">{{ .Description }}</p>
+                    <div class="metadata">
+                        <time class="published-date">{{ .PublishedAt }}</time>
+                    </div>
+                </div>
+            </li>
+            {{ end }}
+        </ul>
+    </section>
+</main>
+</body>
+</html>
