@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <title>Последние новости с kruzhok.org</title>
+    </head>
+    <body>
+        {{if .}}
+            {{range .}}
+                <div>
+                    <a href="http://kruzhok.org/{{.Link}}">{{.Title}}</a>
+                    <br/>
+                </div>
+            {{end}}
+        {{else}}
+            Не удалось загрузить новости!
+        {{end}}
+    </body>
+</html>
