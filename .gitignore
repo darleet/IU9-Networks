@@ -1,9 +1,12 @@
 # Ignore temporary files
 */tmp
 
-# Ignore Go settings files
-*.mod
-*.sum
-
 # Ignore .idea 
 */.idea
+
+# Ignore binaries
+*/bin
+
+# Ignore archives
+*.tar.gz
+*.zip
