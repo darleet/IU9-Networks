@@ -5,4 +5,5 @@ go get golang.org/x/net/html
 go install .
 
 go build
+mkdir -p ../bin
 mv ./server ../bin/server
