@@ -55,6 +55,7 @@ func (p *Peer) say() {
 			fmt.Print("Enter message text: ")
 			fmt.Scanf("%s", &s)
 			go p.dial(Message{p.name, s})
+			fmt.Println("Message was sent to next peer (if he is online)")
 		case "stop":
 			p.stop <- struct{}{}
 			return
