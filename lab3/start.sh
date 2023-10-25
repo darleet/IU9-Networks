@@ -1,6 +1,6 @@
 #!/bin/bash
 print_usage() {
-    echo "Usage: start.sh [-r rebuild]";
+    echo "Usage: start.sh [-r rebuild]"
 }
 
 rebuild=false
@@ -19,13 +19,13 @@ while getopts "hr" FLAG; do
     esac
 done
 
-if [ ! -e ./bin/peer ] || $rebuild;
+if [ ! -e ./bin/peer ] || $rebuild
     then
-        echo "Building project...";
-        ./build.sh;
-elif [ ! -x ./bin/peer ];
+        echo "Building project..."
+        ./build.sh
+elif [ ! -x ./bin/peer ]
     then
-        chmod +x ./bin/peer;
+        chmod +x ./bin/peer
 fi
 
-cd ./bin && ./peer;
+cd ./bin && ./peer
