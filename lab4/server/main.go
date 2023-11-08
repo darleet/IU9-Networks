@@ -1,23 +1,35 @@
 package main
 
 import (
+	"io"
 	"log/slog"
+	"os/exec"
+	"strings"
 
 	"github.com/gliderlabs/ssh"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func handler(s ssh.Session) {
+func handleSSH(s ssh.Session) {
 	term := terminal.NewTerminal(s, "> ")
 	for {
 		line, err := term.ReadLine()
-		if err != nil {
-			break
+		if err == io.EOF {
+			slog.Info("ssh client exited session.")
+			return
+		} else if err != nil {
+			slog.Error(err.Error())
+			continue
 		}
-		slog.Info(line)
+		fields := strings.Fields(line)
+		cmd := exec.Command(fields[0], fields[1:]...)
+		cmd.Stdout = s
+		cmd.Stderr = s
+		if err := cmd.Run(); err != nil {
+			slog.Error(err.Error())
+		}
 	}
-	slog.Info("terminal closed")
 }
 
 func main() {
@@ -26,9 +38,16 @@ func main() {
 		slog.Error(err.Error())
 		return
 	}
-	ssh.Handle(handler)
-	if err := ssh.ListenAndServe(env["SERVER_HOST_ADDRESS"], nil,
-		ssh.HostKeyFile(env["SERVER_HOST_KEY"])); err != nil {
+
+	server := ssh.Server{
+		Addr:    env["SERVER_HOST_ADDRESS"],
+		Handler: handleSSH,
+		SubsystemHandlers: map[string]ssh.SubsystemHandler{
+			"sftp": handleSFTP,
+		},
+	}
+	server.SetOption(ssh.HostKeyFile(env["SERVER_HOST_KEY"]))
+	if err := server.ListenAndServe(); err != nil {
 		slog.Error(err.Error())
 		return
 	}
