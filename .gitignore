@@ -10,3 +10,6 @@
 # Ignore archives
 *.tar.gz
 *.zip
+
+# Ignore env variables files
+*.env
