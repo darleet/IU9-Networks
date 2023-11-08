@@ -8,8 +8,24 @@ import (
 
 	"github.com/gliderlabs/ssh"
 	"github.com/joho/godotenv"
+	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh/terminal"
 )
+
+func handleSFTP(sess ssh.Session) {
+	server, err := sftp.NewServer(sess)
+	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+	if err := server.Serve(); err == io.EOF {
+		server.Close()
+		slog.Info("sftp client exited session.")
+	} else if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+}
 
 func handleSSH(s ssh.Session) {
 	term := terminal.NewTerminal(s, "> ")
@@ -42,6 +58,9 @@ func main() {
 	server := ssh.Server{
 		Addr:    env["SERVER_HOST_ADDRESS"],
 		Handler: handleSSH,
+		SubsystemHandlers: map[string]ssh.SubsystemHandler{
+			"sftp": handleSFTP,
+		},
 	}
 	server.SetOption(ssh.HostKeyFile(env["SERVER_HOST_KEY"]))
 	if err := server.ListenAndServe(); err != nil {
