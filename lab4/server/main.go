@@ -42,9 +42,6 @@ func main() {
 	server := ssh.Server{
 		Addr:    env["SERVER_HOST_ADDRESS"],
 		Handler: handleSSH,
-		SubsystemHandlers: map[string]ssh.SubsystemHandler{
-			"sftp": handleSFTP,
-		},
 	}
 	server.SetOption(ssh.HostKeyFile(env["SERVER_HOST_KEY"]))
 	if err := server.ListenAndServe(); err != nil {
