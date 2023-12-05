@@ -16,5 +16,6 @@ func main() {
 	if !ok {
 		addr = "localhost:8080"
 	}
+	log.Println("Starting server on " + addr)
 	server.Run(addr)
 }
