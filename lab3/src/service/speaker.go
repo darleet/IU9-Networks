@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"encoding/json"
@@ -9,21 +9,21 @@ import (
 func (p *Peer) dial(msg Message) {
 	conn, err := net.Dial("tcp", p.NextAddress())
 	if err != nil {
-		p.logger.Println(err.Error())
+		p.Logger.Println(err.Error())
 		return
 	}
 	defer conn.Close()
 
 	jBytes, err := json.Marshal(msg)
 	if err != nil {
-		p.logger.Panic(err.Error())
+		p.Logger.Panic(err.Error())
 	}
 
 	_, err = conn.Write(jBytes)
 	if err != nil {
-		p.logger.Panic(err.Error())
+		p.Logger.Panic(err.Error())
 	}
-	p.logger.Printf("%s: sent message to %s successfully\n",
+	p.Logger.Printf("%s: sent message to %s successfully\n",
 		p.Address(), p.NextAddress())
 }
 
@@ -39,7 +39,7 @@ func (p *Peer) say() {
 			fmt.Print("Enter name of peer to subscribe: ")
 			fmt.Scanf("%s", &name)
 			p.mu.Lock()
-			p.subscrList[name] = struct{}{}
+			p.SubscrList[name] = struct{}{}
 			p.mu.Unlock()
 			fmt.Println("Success!")
 		case "del":
@@ -47,17 +47,17 @@ func (p *Peer) say() {
 			fmt.Print("Enter name of peer to unsubscribe: ")
 			fmt.Scanf("%s", &name)
 			p.mu.Lock()
-			delete(p.subscrList, name)
+			delete(p.SubscrList, name)
 			p.mu.Unlock()
 			fmt.Println("Success!")
 		case "send":
 			var s string
 			fmt.Print("Enter message text: ")
 			fmt.Scanf("%s", &s)
-			go p.dial(Message{p.name, s})
+			go p.dial(Message{p.Name, s})
 			fmt.Println("Message was sent to next peer (if he is online)")
 		case "stop":
-			p.stop <- struct{}{}
+			p.Stop <- struct{}{}
 			return
 		default:
 			fmt.Println("Incorrect command! Try again.")

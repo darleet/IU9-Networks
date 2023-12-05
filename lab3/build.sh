@@ -1,5 +1,4 @@
 #!/bin/bash
-cd ./src
-go build
-mkdir -p ../bin
-mv ./peer ../bin/peer
+go build ./src/cmd/main.go
+mkdir -p ./bin
+mv ./main ./bin/peer

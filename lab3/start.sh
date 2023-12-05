@@ -28,4 +28,4 @@ elif [ ! -x ./bin/peer ]
         chmod +x ./bin/peer
 fi
 
-cd ./bin && ./peer
+./bin/peer
