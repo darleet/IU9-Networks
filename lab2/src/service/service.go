@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"net/http"
@@ -80,7 +80,7 @@ func search(node *html.Node) []*Item {
 	return nil
 }
 
-func downloadNews() []*Item {
+func DownloadNews() []*Item {
 	log.Info("sending request to kruzhok.org/news")
 	if response, err := http.Get("https://kruzhok.org/news"); err != nil {
 		log.Error("request to kruzhok.org/news failed", "error", err)

@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"html/template"
 	"net/http"
+	"newsfeed/src/service"
 
 	log "github.com/mgutz/logxi/v1"
 )
@@ -20,7 +21,7 @@ func serveClient(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	data := downloadNews()
+	data := service.DownloadNews()
 	if data == nil {
 		log.Error("Empty data", "error", data)
 		return
