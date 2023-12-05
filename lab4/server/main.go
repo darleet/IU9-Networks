@@ -2,20 +2,38 @@ package main
 
 import (
 	"io"
+	"lab4/server/service"
 	"log/slog"
 	"os/exec"
 	"strings"
 
 	"github.com/gliderlabs/ssh"
 	"github.com/joho/godotenv"
-	"golang.org/x/crypto/ssh/terminal"
+	"github.com/pkg/sftp"
+	"golang.org/x/term"
 )
+
+// handleSFTP handles SFTP connection (за это обещали доп балл!!)
+func handleSFTP(sess ssh.Session) {
+	server, err := sftp.NewServer(sess)
+	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+	if err := server.Serve(); err == io.EOF {
+		server.Close()
+		slog.Info("sftp client exited session.")
+	} else if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+}
 
 // handleSSH is the main handler for ssh
 func handleSSH(s ssh.Session) {
-	term := terminal.NewTerminal(s, "> ")
+	t := term.NewTerminal(s, "> ")
 	for {
-		line, err := term.ReadLine()
+		line, err := t.ReadLine()
 		if err == io.EOF {
 			slog.Info("ssh client exited session.")
 			return
@@ -40,8 +58,8 @@ func main() {
 		return
 	}
 
-	a := auth{
-		users: map[string]string{
+	a := service.Auth{
+		Users: map[string]string{
 			"darleet": "test1234",
 		},
 	}
@@ -49,7 +67,10 @@ func main() {
 	server := ssh.Server{
 		Addr:            env["SERVER_HOST_ADDRESS"],
 		Handler:         handleSSH,
-		PasswordHandler: a.handlePassword,
+		PasswordHandler: a.HandlePassword,
+		SubsystemHandlers: map[string]ssh.SubsystemHandler{
+			"sftp": handleSFTP,
+		},
 	}
 	server.SetOption(ssh.HostKeyFile(env["SERVER_HOST_KEY"]))
 	if err := server.ListenAndServe(); err != nil {
