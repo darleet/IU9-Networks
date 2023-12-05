@@ -1,19 +1,19 @@
 package main
 
 import (
-	"gopkg.in/ini.v1"
-	"lab5/server"
 	"log"
+	"websockets/server"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	cfg, err := ini.Load(".ini")
+	env, err := godotenv.Read()
 	if err != nil {
 		log.Fatal(err)
 	}
-	data := cfg.Section("connection")
-	addr := data.Key("address").String()
-	if addr == "" {
+	addr, ok := env["CONNECTION_ADDRESS"]
+	if !ok {
 		addr = "localhost:8080"
 	}
 	server.Run(addr)

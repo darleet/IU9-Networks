@@ -1,20 +1,20 @@
 package main
 
 import (
-	"gopkg.in/ini.v1"
-	"lab5/client"
 	"log"
+	"websockets/client"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	cfg, err := ini.Load(".ini")
+	env, err := godotenv.Read()
 	if err != nil {
 		log.Fatal(err)
 	}
-	data := cfg.Section("connection")
-	addr := data.Key("address").String()
-	if addr == "" {
-		log.Fatal("no address provided in .ini")
+	addr, ok := env["CONNECTION_ADDRESS"]
+	if !ok {
+		log.Fatal("no connection address provided in .env")
 	}
 	client.Run(addr)
 }

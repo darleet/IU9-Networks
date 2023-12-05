@@ -1,12 +1,13 @@
-package server
+package service
 
 import (
 	"encoding/json"
-	"github.com/gorilla/websocket"
-	"lab5/model"
 	"log"
 	"net/http"
 	"strconv"
+	"websockets/model"
+
+	"github.com/gorilla/websocket"
 )
 
 func processRequest(conn *websocket.Conn, msg []byte) {
@@ -46,7 +47,7 @@ func listenSocket(conn *websocket.Conn) {
 	}
 }
 
-func handleSocket(w http.ResponseWriter, r *http.Request) {
+func HandleSocket(w http.ResponseWriter, r *http.Request) {
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,

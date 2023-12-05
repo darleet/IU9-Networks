@@ -1,12 +1,13 @@
-package client
+package service
 
 import (
-	"github.com/gorilla/websocket"
-	"lab5/model"
 	"log"
+	"websockets/model"
+
+	"github.com/gorilla/websocket"
 )
 
-func listenSocket(c *websocket.Conn) {
+func ListenSocket(c *websocket.Conn) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {

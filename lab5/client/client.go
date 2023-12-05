@@ -1,9 +1,11 @@
 package client
 
 import (
-	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
+	"websockets/client/service"
+
+	"github.com/gorilla/websocket"
 )
 
 func Run(address string) {
@@ -16,6 +18,6 @@ func Run(address string) {
 	}
 	defer c.Close()
 
-	go listenSocket(c)
-	handleTerminal(c)
+	go service.ListenSocket(c)
+	service.HandleTerminal(c)
 }

@@ -1,13 +1,14 @@
-package client
+package service
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
-	"lab5/model"
 	"log"
 	"os"
 	"os/signal"
 	"strconv"
+	"websockets/model"
+
+	"github.com/gorilla/websocket"
 )
 
 func listenTerminal(input chan string) {
@@ -18,7 +19,7 @@ func listenTerminal(input chan string) {
 	}
 }
 
-func handleTerminal(c *websocket.Conn) {
+func HandleTerminal(c *websocket.Conn) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
@@ -37,7 +38,7 @@ func handleTerminal(c *websocket.Conn) {
 		case s := <-input:
 			v, err := strconv.Atoi(s)
 			if err != nil {
-				log.Println(fmt.Sprintf("could not convert `%v` to int", s))
+				log.Printf("could not convert `%v` to int\n", s)
 				break
 			}
 			err = sendRequest(c, model.Request{Value: v})
