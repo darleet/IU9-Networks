@@ -1,9 +1,11 @@
 package service
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 )
 
 func (p *Peer) dial(msg Message) {
@@ -51,11 +53,15 @@ func (p *Peer) say() {
 			p.mu.Unlock()
 			fmt.Println("Success!")
 		case "send":
-			var s string
 			fmt.Print("Enter message text: ")
-			fmt.Scanf("%s", &s)
-			go p.dial(Message{p.Name, s})
-			fmt.Println("Message was sent to next peer (if he is online)")
+			r := bufio.NewReader(os.Stdin)
+			s, err := r.ReadString('\n')
+			if err != nil {
+				fmt.Println("Error occurred while reading message text")
+			} else {
+				go p.dial(Message{p.Name, s})
+				fmt.Println("Message was sent to next peer (if he is online)")
+			}
 		case "stop":
 			p.Stop <- struct{}{}
 			return
